@@ -1,0 +1,45 @@
+#!/bin/bash
+#260871813
+#Elias tamraz
+if [ "$#" -le "3" ]; then #make sure the number of arguments is correct-
+echo "you have entered wrong number of arguments.Please follow the correct syntaxs: ./backup SWITCH FILES DEST MESSAGE."
+exit 1
+
+fi
+if [ $1 = -D ]; then #this if checks if there is a swich
+if [ ! -d $3 ]; then #if directory is not existed then make one
+mkdir $3
+fi
+THEDATE=$(date +"%m-%d-%Y")
+tar -cvf ./$3/backup$THEDATE.tar $2
+cd $3 #go to the directory to change mod
+chmod 600 backup$THEDATE.tar #600 means user only can read and write 
+TIME=$(date +"%T") # take time
+echo "$THEDATE $TIME" >> ./$3/backups.log
+rm $2
+fi
+
+
+if [ $1 != -D ]; then
+if [ ! -d $2 ]; then
+mkdir $2
+fi
+THEDATE=$(date +"%m-%d-%Y")
+tar -cvf ./$2/backup$THEDATE.tar $1 ./$2
+cd $2
+chmod 600 backup$THEDATE.tar
+TIME=$(date +"%T")
+echo "$THEDATE $TIME" >> backups.log
+fi
+
+if [ $1 = -D ]; then
+shift   #shift switch if existed
+fi
+shift #for the file name
+shift #for the directory name 
+while [ $# != 0 ]
+do
+        echo -ne "$1 " >> backups.log
+        shift
+done
+echo -ne "\n" >> backups.log
